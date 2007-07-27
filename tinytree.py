@@ -1,4 +1,4 @@
-import sys, itertools
+import sys, itertools, copy
 
 STOP = object()
 
@@ -52,7 +52,8 @@ class Tree(object):
                     raise ValueError(s)
             else:
                 if not isinstance(i[0], Tree):
-                    raise ValueError, "Invalid tree specification"
+                    s = "Invalid tree specification: %s is not a Tree object."%repr(i[0])
+                    raise ValueError(s)
                 self.addChild(i[0])
                 if isinstance(i[0], Tree) and _isSequenceLike(i[1]):
                     i[0].addChildrenFromList(i[1])
