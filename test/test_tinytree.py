@@ -116,6 +116,16 @@ class uTreeSimple(pylid.TestCase):
         three = one.children[1]
         assert len(three.children) == 2
 
+    def test_addChildrenFromList_err(self):
+        nodes = [
+            Node("one"), [
+                Node("two"),
+            ], [
+                Node("six"),
+            ]
+        ]
+        self.failWith("not a tree object", Node, "root", nodes)
+
 
 class uconstructFromList(pylid.TestCase):
     def test_foo(self):

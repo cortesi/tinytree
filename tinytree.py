@@ -37,7 +37,7 @@ class Tree(object):
         self.parent = None
             
     def addChildrenFromList(self, children):
-        skip = False
+        skip = True
         v = zip(
             itertools.chain([None], children),
             itertools.chain(children, [None])
@@ -46,24 +46,19 @@ class Tree(object):
             if skip:
                 skip = False
                 continue
-            if i[0] == None:
-                if _isSequenceLike(i[1]):
-                    s = "Invalid tree specification - initial element is list."
-                    raise ValueError(s)
-            else:
-                if not isinstance(i[0], Tree):
-                    s = "Invalid tree specification: %s is not a Tree object."%repr(i[0])
-                    raise ValueError(s)
-                self.addChild(i[0])
-                if isinstance(i[0], Tree) and _isSequenceLike(i[1]):
-                    i[0].addChildrenFromList(i[1])
-                    skip = True
+            self.addChild(i[0])
+            if not isinstance(i[1], Tree) and _isSequenceLike(i[1]):
+                i[0].addChildrenFromList(i[1])
+                skip = True
 
     def addChild(self, node):
         """
             Add a child to this node. The node object MUST obey the Pytree
             interface.
         """
+        if not isinstance(node, Tree):
+            s = "Invalid tree specification: %s is not a Tree object."%repr(node)
+            raise ValueError(s)
         if not node in self.children:
             node.parent = self
             self.children.append(node)
