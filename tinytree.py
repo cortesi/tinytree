@@ -47,7 +47,7 @@ class Tree(object):
                 skip = False
                 continue
             self.addChild(i[0])
-            if not isinstance(i[1], Tree) and _isSequenceLike(i[1]):
+            if _isSequenceLike(i[1]):
                 i[0].addChildrenFromList(i[1])
                 skip = True
 
@@ -276,7 +276,7 @@ class Tree(object):
             print >> outf, "\t"*(i.getDepth()-1), i
 
 
-def constructFromList(lst, parent=None):
+def constructFromList(lst):
     """
         Takes a nested list of Tree objects, and creates the link structure to
         turn it into a forest of trees.
@@ -288,12 +288,9 @@ def constructFromList(lst, parent=None):
     heads = []
     for i, val in enumerate(lst):
         if _isSequenceLike(val):
-            if i == 0:
-                raise ValueError, "Invalid list for tree."
-            else:
-                constructFromList(val, parent=lst[i-1])
+            if i == 0 or _isSequenceLike(lst[i-1]):
+                raise ValueError, "constructFromList: Invalid list."
+            lst[i-1].addChildrenFromList(val)
         else:
-            if parent:
-                parent.addChild(val)
             heads.append(val)
     return heads
