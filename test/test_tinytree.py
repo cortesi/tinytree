@@ -319,34 +319,6 @@ class uTreeComposite(pylid.TestCase):
         self.tt["c"].ns = dict(a=2)
         assert list(n.getNamespaceKey("ns", "a")) == [2, 1]
 
-    def test_callToRoot(self):
-        n = self.tt["c"]["cb"]
-        l = []
-        n.callToRoot("adder", l)
-        assert l == ["cb", "c", "top"]
-
-        self.tt["c"].adder = None
-        l = []
-        n.callToRoot("adder", l)
-        self.assertEqual(l, ["cb", "top"])
-
-    def test_callFromRoot(self):
-        n = self.tt["c"]["cb"]
-        l = []
-        n.callFromRoot("adder", l)
-        assert l == ["top", "c", "cb"]
-
-    def test_callToRoot_Stop(self):
-        self.tt["c"].stopper = True
-        n = self.tt["c"]["cb"]
-        l = []
-        n.callToRoot("adder", l)
-        assert l == ["cb", "c"]
-
-        l = []
-        n.callFromRoot("adder", l)
-        assert l == ["top", "c"]
-
     def test_dump(self):
         cs = cStringIO.StringIO()
         self.tt.dump(cs)

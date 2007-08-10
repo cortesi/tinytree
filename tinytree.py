@@ -1,7 +1,5 @@
 import sys, itertools, copy
 
-STOP = object()
-
 def _isStringLike(anobj):
     try:
         # Avoid succeeding expensively if anobj is large.
@@ -21,6 +19,10 @@ def _isSequenceLike(anobj):
         except:
             return 0
     return 1
+
+
+class Visitor:
+    pass
 
 
 class Tree(object):
@@ -232,31 +234,6 @@ class Tree(object):
             n = i.get(key, None)
             if n:
                 yield n
-
-    def _call(self, attrs, *args, **kwargs):
-        for i in attrs:
-            if i(*args, **kwargs) == STOP:
-                return
-
-    def callToRoot(self, attr, *args, **kwargs):
-        """
-            Call every attribute attr found between here and the root node.
-            
-            If an attribute returns STOP, this method terminates without
-            calling the remaining attributes.
-        """
-        a = self.attrsToRoot(attr)
-        self._call(a, *args, **kwargs)
-
-    def callFromRoot(self, attr, *args, **kwargs):
-        """
-            Call every attribute attr found between the root node and here.
-
-            If an attribute returns STOP, this method terminates without
-            calling the remaining attributes.
-        """
-        a = reversed(list(self.attrsToRoot(attr)))
-        self._call(a, *args, **kwargs)
 
     @staticmethod
     def treeProp(name):
