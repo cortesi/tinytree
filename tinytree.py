@@ -21,10 +21,6 @@ def _isSequenceLike(anobj):
     return 1
 
 
-class Visitor:
-    pass
-
-
 class Tree(object):
     """
         A simple implementation of an ordered tree. 
@@ -142,6 +138,19 @@ class Tree(object):
         """
         return self.postOrder().next()
 
+    def _find(self, itr, func):
+        for i in itr:
+            if func(i):
+                return i
+        return None
+
+    def findChild(self, func):
+        """
+            Find the first child matching func in a pre-order traversal of this
+            node's children.
+        """
+        return self._find(self.preOrder(), func)
+
     def findForwards(self, func):
         """
             Search the preOrder tree forwards, passing each element to func,
@@ -155,10 +164,7 @@ class Tree(object):
         for i in itr:
             if i == self:
                 break
-        for i in itr:
-            if func(i):
-                return i
-        return None
+        return self._find(itr, func)
 
     def findBackwards(self, func):
         """
@@ -173,10 +179,7 @@ class Tree(object):
         lst = list(self.getTopNode().preOrder())
         lst.reverse()
         myIndex = lst.index(self)
-        for i in lst[(myIndex+1):]:
-            if func(i):
-                return i
-        return None
+        return self._find(lst[(myIndex+1):], func)
 
     def getPrevious(self):
         """

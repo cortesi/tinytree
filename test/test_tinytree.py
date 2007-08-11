@@ -256,6 +256,13 @@ class uTreeComposite(pylid.TestCase):
         self.failUnlessEqual(self.tt.findForwards(search), self.tt["c"]["cb"])
         self.failUnlessEqual(self.tt["c"]["cb"].findForwards(search), None)
 
+    def test_findChild(self):
+        def search(object):
+            return (object.name == "cb")
+        assert self.tt.findChild(search).name == "cb"
+        assert self.tt["c"].findChild(search).name == "cb"
+        assert self.tt["a"].findChild(search) is None
+
     def test_findBackwards(self):
         def search(object):
             return 1
