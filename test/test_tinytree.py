@@ -235,16 +235,6 @@ class uTreeComposite(pylid.TestCase):
         self.failUnlessEqual(self.tt["c"].getTopNode(), self.tt)
         self.failUnlessEqual(self.tt.getTopNode(), self.tt)
 
-    def test_getLast(self):
-        self.failUnlessEqual(self.tt.getLast(), self.tt["d"])
-        self.failUnlessEqual(self.tt["c"].getLast(), self.tt["c"]["cb"])
-        self.failUnlessEqual(self.tt["a"].getLast(), self.tt["a"])
-
-    def test_getFirst(self):
-        self.failUnlessEqual(self.tt.getFirst(), self.tt["a"])
-        self.failUnlessEqual(self.tt["c"].getFirst(), self.tt["c"]["ca"])
-        self.failUnlessEqual(self.tt["a"].getFirst(), self.tt["a"])
-
     def test_findForwards(self):
         def search(object):
             return 1
@@ -255,6 +245,29 @@ class uTreeComposite(pylid.TestCase):
             return (object.name == "cb")
         self.failUnlessEqual(self.tt.findForwards(search), self.tt["c"]["cb"])
         self.failUnlessEqual(self.tt["c"]["cb"].findForwards(search), None)
+
+    def test_findForwardsMultiFunc(self):
+        def s1(object):
+            return 1
+        def s2(object):
+            return (object.name == "cb")
+        assert self.tt.findForwards(s1, s2).name == "cb"
+        def s1(object):
+            return 0
+        assert self.tt.findForwards(s1, s2) == None
+
+    def test_findForwardsKey(self):
+        assert self.tt.findForwards(name="cb").name == "cb"
+        assert self.tt.findForwards(name="nonexistent") == None
+        assert self.tt.findForwards(name="cb", children=[]).name == "cb"
+        assert self.tt.findForwards(name="cb", children="foo") == None
+        assert self.tt.findForwards(porky="cb") == None
+
+    def test_findForwardsCombo(self):
+        def s1(object):
+            return (object.name == "cb")
+        assert self.tt.findForwards(s1, name="c") == None
+        assert self.tt.findForwards(s1, name="cb").name == "cb"
 
     def test_findChild(self):
         def search(object):

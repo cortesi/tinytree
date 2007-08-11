@@ -118,40 +118,33 @@ class Tree(object):
                 yield j
         yield self
 
-    def getLast(self):
-        """
-            Get the last item in the subtree. 
-
-            Here "last" is defined as the last item in the preOrder traversal
-            of the tree.
-        """
-        for i in self.preOrder():
-            pass
-        return i
-
-    def getFirst(self):
-        """
-            Get the first item in the subtree.
-            
-            Here, "first" is defined as the first item in the postOrder
-            traversal of the tree.
-        """
-        return self.postOrder().next()
-
-    def _find(self, itr, func):
+    def _find(self, itr, *func, **kwargs):
         for i in itr:
-            if func(i):
-                return i
+            if kwargs:
+                kwpass = False
+                for k, v in kwargs.items():
+                    if hasattr(i, k):
+                        if not getattr(i, k) == v:
+                            break
+                    else:
+                        break
+                else:
+                    kwpass = True
+            else:
+                kwpass = True
+            if kwpass:
+                if all(map(lambda x: x(i), func)):
+                    return i
         return None
 
-    def findChild(self, func):
+    def findChild(self, *func, **kwargs):
         """
             Find the first child matching func in a pre-order traversal of this
             node's children.
         """
-        return self._find(self.preOrder(), func)
+        return self._find(self.preOrder(), *func, **kwargs)
 
-    def findForwards(self, func):
+    def findForwards(self, *func, **kwargs):
         """
             Search the preOrder tree forwards, passing each element to func,
             until func returns true, then return the matched object. Return
@@ -164,9 +157,9 @@ class Tree(object):
         for i in itr:
             if i == self:
                 break
-        return self._find(itr, func)
+        return self._find(itr, *func, **kwargs)
 
-    def findBackwards(self, func):
+    def findBackwards(self, *func, **kwargs):
         """
             Search the preOrder tree backwards, passing each element to func,
             until func returns true, then return the matched object. Return
@@ -179,7 +172,7 @@ class Tree(object):
         lst = list(self.getTopNode().preOrder())
         lst.reverse()
         myIndex = lst.index(self)
-        return self._find(lst[(myIndex+1):], func)
+        return self._find(lst[(myIndex+1):], *func, **kwargs)
 
     def getPrevious(self):
         """
