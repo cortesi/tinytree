@@ -149,9 +149,6 @@ class Tree(object):
             Search the preOrder tree forwards, passing each element to func,
             until func returns true, then return the matched object. Return
             None if object not found.
-
-            preOrder was chosen as the most useful order, since it matches the
-            natural "previous" and "next" order of a document. 
         """
         itr = self.getTopNode().preOrder()
         for i in itr:
@@ -164,9 +161,6 @@ class Tree(object):
             Search the preOrder tree backwards, passing each element to func,
             until func returns true, then return the matched object. Return
             None if object not found.
-
-            preOrder was chosen as the most useful order, since it matches the
-            natural "previous" and "next" order of a document. 
         """
         # FIXME: Dreadfully inefficient...
         lst = list(self.getTopNode().preOrder())
