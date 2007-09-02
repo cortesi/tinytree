@@ -109,6 +109,13 @@ class Tree(object):
         for i in nodes:
             i.register(parent)
 
+    def reparent(self, node):
+        """
+            Inserts a node between the current node and its parent.
+        """
+        self.replace(node)
+        node.addChild(self)
+
     def isDescendantOf(self, obj):
         """
             Returns true if object lies somewhere on the path to the root. 
