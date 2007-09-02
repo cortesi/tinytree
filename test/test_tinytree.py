@@ -63,8 +63,8 @@ class uTreeSimple(pylid.TestCase):
         self.node.addChild(self.nodeB)
         self.failUnless(self.nodeB.parent is self.node)
 
-    def test_nodeCount(self):
-        self.failUnless(self.nodeB.nodeCount() == 1)
+    def test_len(self):
+        self.failUnless(len(self.nodeB) == 1)
 
     def test_init_initialList(self):
         spec = [
@@ -196,8 +196,8 @@ class uconstructFromList(pylid.TestCase):
         one = pages[0]
         six = pages[2]
         heads = tinytree.constructFromList(pages)
-        self.failUnlessEqual(one.nodeCount(), 5)
-        self.failUnlessEqual(six.nodeCount(), 1)
+        self.failUnlessEqual(len(one), 5)
+        self.failUnlessEqual(len(six), 1)
         self.failUnlessEqual(len(heads), 2)
 
     def test_err(self):
@@ -261,8 +261,8 @@ class uTreeComposite(pylid.TestCase):
                                 ])
         self.failUnlessEqual(list(self.tt["a"].postOrder()), ["a"])
 
-    def test_nodeCount(self):
-        self.failUnlessEqual(self.tt.nodeCount(), 7)
+    def test_len(self):
+        self.failUnlessEqual(len(self.tt), 7)
 
     def test_pathToRoot(self):
         self.failUnlessEqual(list(self.tt["c"]["ca"].pathToRoot()), ["ca", "c", "top"])

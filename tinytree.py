@@ -228,12 +228,6 @@ class Tree(object):
         """
         return self.findForwards(lambda x: 1)
 
-    def nodeCount(self):
-        """
-            Number of nodes in this tree, including the root.
-        """
-        return len(list(self.preOrder()))
-
     def getDepth(self):
         """
             Return the depth of this node.
@@ -289,6 +283,12 @@ class Tree(object):
     def dump(self, outf=sys.stdout):
         for i in self.preOrder():
             print >> outf, "\t"*(i.getDepth()-1), repr(i)
+
+    def __len__(self):
+        """
+            Number of nodes in this tree, including the root.
+        """
+        return len(list(self.preOrder()))
 
 
 def constructFromList(lst):
