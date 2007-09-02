@@ -57,8 +57,15 @@ class Tree(object):
         if not isinstance(node, Tree):
             s = "Invalid tree specification: %s is not a Tree object."%repr(node)
             raise ValueError(s)
-        node.parent = self
+        node.register(self)
         self.children.append(node)
+
+    def register(self, parent):
+        """
+            Register this node with a parent after it has been added to the
+            parent's child list.
+        """
+        self.parent = parent
 
     def index(self):
         """
@@ -70,13 +77,27 @@ class Tree(object):
         lst = [id(i) for i in self.parent.children]
         return lst.index(id(self))
 
+    def remove(self):
+        """
+            Remove this node from its parent. Returns the index this node had
+            in the parent child list.
+        """
+        idx = self.index()
+        del self.parent.children[idx:idx+1]
+        self.parent = None
+        return idx
+
     def replace(self, *nodes):
         """
             Replace this node with a sequence of other nodes. This is
             equivalent to deleting this node from the child list, and then
             inserting the specified sequence in its place.
         """
-        pass
+        parent = self.parent
+        idx = self.remove()
+        parent.children[idx:idx] = nodes
+        for i in nodes:
+            i.register(parent)
 
     def isDescendantOf(self, obj):
         """

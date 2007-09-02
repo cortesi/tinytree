@@ -94,6 +94,34 @@ class uTreeSimple(pylid.TestCase):
         ]
         self.assertRaises(ValueError, tinytree.Tree, spec)
 
+    def test_remove(self):
+        nodes = [
+            Node("one"),
+            Node("two"),
+            Node("three"),
+        ]
+        t = Node("root", nodes)
+        n = t["two"]
+        n.remove()
+        assert len(t.children) == 2
+        assert n.parent is None
+
+        n = t["one"]
+        n.remove()
+        assert len(t.children) == 1
+
+    def test_replace(self):
+        nodes = [
+            Node("one"),
+            Node("two"),
+            Node("three"),
+        ]
+        t = Node("root", nodes)
+        n = t["two"]
+        n.replace(Node("four"), Node("five"))
+        assert len(t.children) == 4
+        self.assertRaises(KeyError, t.__getitem__, "two")
+
     def test_index(self):
         nodes = [
             Node("one"),
