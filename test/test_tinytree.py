@@ -94,6 +94,17 @@ class uTreeSimple(pylid.TestCase):
         ]
         self.assertRaises(ValueError, tinytree.Tree, spec)
 
+    def test_index(self):
+        nodes = [
+            Node("one"),
+            Node("two"),
+            Node("three"),
+        ]
+        t = Node("root", nodes)
+        assert t["one"].index() == 0
+        assert t["two"].index() == 1
+        self.failWith("node with no parent", t.index)
+
     def test_addChildrenFromList(self):
         nodes = [
             Node("one"),
@@ -176,13 +187,6 @@ class uTreeComposite(pylid.TestCase):
                 ]
             ]
         self.tt = tinytree.constructFromList(self.lst)[0]
-
-    def test_double(self):
-        tt = tinytree.constructFromList(self.lst)[0]
-        x1 = len(list(tt.preOrder()))
-        tt = tinytree.constructFromList(self.lst)[0]
-        x2 = len(list(tt.preOrder()))
-        self.failUnlessEqual(x1, x2)
 
     def test_siblings(self):
         sibs = list(self.tt["a"].siblings())
