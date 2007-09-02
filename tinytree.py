@@ -240,7 +240,7 @@ class Tree(object):
 
     def dump(self, outf=sys.stdout):
         for i in self.preOrder():
-            print >> outf, "\t"*(i.getDepth()-1), i
+            print >> outf, "\t"*(i.getDepth()-1), repr(i)
 
 
 def constructFromList(lst):
