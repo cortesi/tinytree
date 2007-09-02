@@ -130,8 +130,9 @@ class uTreeSimple(pylid.TestCase):
         ]
         t = Node("root", nodes)
         n = t["two"]
-        n.reparent(Node("parent"))
+        node = n.reparent(Node("parent"))
         assert t["parent"]["two"]
+        assert node.name == "parent"
 
     def test_clear(self):
         nodes = [

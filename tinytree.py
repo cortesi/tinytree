@@ -111,10 +111,12 @@ class Tree(object):
 
     def reparent(self, node):
         """
-            Inserts a node between the current node and its parent.
+            Inserts a node between the current node and its parent. Returns the
+            specified parent node.
         """
         self.replace(node)
         node.addChild(self)
+        return node
 
     def isDescendantOf(self, obj):
         """
