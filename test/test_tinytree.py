@@ -122,6 +122,19 @@ class uTreeSimple(pylid.TestCase):
         assert len(t.children) == 4
         self.assertRaises(KeyError, t.__getitem__, "two")
 
+
+    def test_clear(self):
+        nodes = [
+            Node("one"),
+            Node("two"),
+            Node("three"),
+        ]
+        t = Node("root", nodes)
+        ret = t.clear()
+        for i in ret:
+            assert not i.parent
+        assert not t.children
+
     def test_index(self):
         nodes = [
             Node("one"),

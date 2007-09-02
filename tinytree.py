@@ -87,6 +87,16 @@ class Tree(object):
         self.parent = None
         return idx
 
+    def clear(self):
+        """
+            Clear all the children of this node. Return a list of the removed
+            children.
+        """
+        n = self.children[:]
+        for i in n:
+            i.remove()
+        return n
+
     def replace(self, *nodes):
         """
             Replace this node with a sequence of other nodes. This is
