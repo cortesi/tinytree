@@ -291,6 +291,14 @@ class uTreeComposite(pylid.TestCase):
         self.failUnlessEqual(self.tt["c"].getTopNode(), self.tt)
         self.failUnlessEqual(self.tt.getTopNode(), self.tt)
 
+    def test_findParent(self):
+        def search(object):
+            return 1
+        self.failUnlessEqual(self.tt["c"]["cb"].findParent(search), self.tt["c"])
+        def search(object):
+            return (object.name == "top")
+        self.failUnlessEqual(self.tt["c"]["cb"].findParent(search), self.tt)
+
     def test_findForwards(self):
         def search(object):
             return 1

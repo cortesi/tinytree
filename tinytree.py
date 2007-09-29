@@ -201,6 +201,17 @@ class Tree(object):
         """
         return self._find(self.preOrder(), *func, **kwargs)
 
+    def findParent(self, *func, **kwargs):
+        """
+            Find the first node matching func in a traversal to the root of the
+            tree.
+        """
+        return self._find(
+            itertools.islice(self.pathToRoot(), 1, None),
+            *func,
+            **kwargs
+        )
+
     def findForwards(self, *func, **kwargs):
         """
             Search the preOrder tree forwards, passing each element to func,
