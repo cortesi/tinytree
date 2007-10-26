@@ -144,7 +144,7 @@ class Tree(object):
         itm = self
         while 1:
             yield itm
-            if itm.parent:
+            if itm.parent is not None:
                 itm = itm.parent
             else:
                 break
@@ -303,8 +303,8 @@ class Tree(object):
     def dump(self, outf=sys.stdout):
         for i in self.preOrder():
             print >> outf, "\t"*(i.getDepth()-1), repr(i)
-
-    def __len__(self):
+    
+    def count(self):
         """
             Number of nodes in this tree, including the root.
         """
