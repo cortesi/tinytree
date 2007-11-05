@@ -280,6 +280,12 @@ class uTreeComposite(pylid.TestCase):
         self.failUnlessEqual(list(self.tt.pathToRoot()), ["top"])
         self.failUnlessEqual(list(self.tt["a"].pathToRoot()), ["a", "top"])
 
+    def test_pathFromRoot(self):
+        self.failUnlessEqual(
+            list(self.tt["c"]["ca"].pathToRoot()),
+            list(reversed(list(self.tt["c"]["ca"].pathFromRoot()))),
+        )
+
     def test_isDescendantOf(self):
         self.failUnless(self.tt["a"].isDescendantOf(self.tt))
         self.failUnless(self.tt["c"]["ca"].isDescendantOf(self.tt["c"]))

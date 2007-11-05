@@ -149,6 +149,15 @@ class Tree(object):
             else:
                 break
 
+    def pathFromRoot(self):
+        """
+            Generator yielding all objects on the path to this element from the
+            root of the tree, including ourselves.
+        """
+        l = list(self.pathToRoot())
+        for i in reversed(l):
+            yield i
+
     def getTopNode(self):
         """
             Return the topmost node in the tree.
