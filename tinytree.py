@@ -162,6 +162,7 @@ class Tree(object):
         """
             Return the topmost node in the tree.
         """
+        # FIXME: Rename this to getRoot
         for i in self.pathToRoot():
             pass
         return i
@@ -171,7 +172,8 @@ class Tree(object):
             Return a list of the elements of the tree in PreOrder.
         """
         yield self
-        for i in self.children:
+        # Take copy to make this robust under modification
+        for i in self.children[:]:
             for j in i.preOrder():
                 yield j
 
@@ -179,7 +181,8 @@ class Tree(object):
         """
             Return a list of the elements of the tree in PreOrder.
         """
-        for i in self.children:
+        # Take copy to make this robust under modification
+        for i in self.children[:]:
             for j in i.postOrder():
                 yield j
         yield self
