@@ -1,22 +1,23 @@
-import pylid, os, os.path, cStringIO
+import os, os.path, cStringIO
+import libpry
 import tinytree
 
-class u_isStringLike(pylid.TestCase):
+class u_isStringLike(libpry.AutoTree):
     def test_all(self):
-        self.failUnless(tinytree._isStringLike("foo"))
-        self.failIf(tinytree._isStringLike([1, 2, 3]))
-        self.failIf(tinytree._isStringLike((1, 2, 3)))
-        self.failIf(tinytree._isStringLike(["1", "2", "3"]))
+        assert tinytree._isStringLike("foo")
+        assert not tinytree._isStringLike([1, 2, 3])
+        assert not tinytree._isStringLike((1, 2, 3))
+        assert not tinytree._isStringLike(["1", "2", "3"])
 
 
-class u_isSequenceLike(pylid.TestCase):
+class u_isSequenceLike(libpry.AutoTree):
     def test_all(self):
-        self.failUnless(tinytree._isSequenceLike([1, 2, 3]))
-        self.failUnless(tinytree._isSequenceLike((1, 2, 3)))
-        self.failIf(tinytree._isSequenceLike("foobar"))
-        self.failUnless(tinytree._isSequenceLike(["foobar", "foo"]))
+        assert tinytree._isSequenceLike([1, 2, 3])
+        assert tinytree._isSequenceLike((1, 2, 3))
+        assert not tinytree._isSequenceLike("foobar")
+        assert tinytree._isSequenceLike(["foobar", "foo"])
         x = iter([1, 2, 3])
-        self.failUnless(tinytree._isSequenceLike(x))
+        assert tinytree._isSequenceLike(x)
 
 
 class Node(tinytree.Tree):
@@ -54,23 +55,23 @@ class Node(tinytree.Tree):
             return tinytree.STOP
 
 
-class uTreeSimple(pylid.TestCase):
+class uTreeSimple(libpry.AutoTree):
     def setUp(self):
         self.node  = tinytree.Tree()
         self.nodeB = tinytree.Tree()
 
     def test_addChild(self):
         self.node.addChild(self.nodeB)
-        self.failUnless(self.nodeB.parent is self.node)
+        assert self.nodeB.parent is self.node
 
     def test_count(self):
-        self.failUnless(self.nodeB.count() == 1)
+        assert self.nodeB.count() == 1
 
     def test_init_initialList(self):
         spec = [
             [ tinytree.Tree() ]
         ]
-        self.assertRaises(ValueError, tinytree.Tree, spec)
+        libpry.raises(ValueError, tinytree.Tree, spec)
 
     def test_init_singleelement(self):
         spec = [ tinytree.Tree() ]
@@ -83,7 +84,7 @@ class uTreeSimple(pylid.TestCase):
             [ tinytree.Tree() ],
             [ tinytree.Tree() ]
         ]
-        self.assertRaises(ValueError, tinytree.Tree, spec)
+        libpry.raises(ValueError, tinytree.Tree, spec)
 
     def test_init_doublelist_inner(self):
         spec = [
@@ -92,7 +93,7 @@ class uTreeSimple(pylid.TestCase):
             [ tinytree.Tree() ],
             tinytree.Tree(),
         ]
-        self.assertRaises(ValueError, tinytree.Tree, spec)
+        libpry.raises(ValueError, tinytree.Tree, spec)
 
     def test_remove(self):
         nodes = [
@@ -120,7 +121,7 @@ class uTreeSimple(pylid.TestCase):
         n = t["two"]
         n.replace(Node("four"), Node("five"))
         assert len(t.children) == 4
-        self.assertRaises(KeyError, t.__getitem__, "two")
+        libpry.raises(KeyError, t.__getitem__, "two")
 
     def test_reparent(self):
         nodes = [
@@ -155,7 +156,7 @@ class uTreeSimple(pylid.TestCase):
         t = Node("root", nodes)
         assert t["one"].index() == 0
         assert t["two"].index() == 1
-        self.failWith("node with no parent", t.index)
+        libpry.raises("node with no parent", t.index)
 
     def test_addChildrenFromList(self):
         nodes = [
@@ -187,10 +188,10 @@ class uTreeSimple(pylid.TestCase):
                 Node("six"),
             ]
         ]
-        self.failWith("not a tree object", Node, "root", nodes)
+        libpry.raises("not a tree object", Node, "root", nodes)
 
 
-class uconstructFromList(pylid.TestCase):
+class uconstructFromList(libpry.AutoTree):
     def test_foo(self):
         pages = [
             Node("one"),
@@ -207,15 +208,15 @@ class uconstructFromList(pylid.TestCase):
         one = pages[0]
         six = pages[2]
         heads = tinytree.constructFromList(pages)
-        self.failUnlessEqual(one.count(), 5)
-        self.failUnlessEqual(six.count(), 1)
-        self.failUnlessEqual(len(heads), 2)
+        assert one.count() == 5
+        assert six.count() == 1
+        assert len(heads) == 2
 
     def test_err(self):
         pages = [
             [ Node("one")]
         ]
-        self.failUnlessRaises(ValueError, tinytree.constructFromList, pages)
+        libpry.raises(ValueError, tinytree.constructFromList, pages)
 
 
 class TopNode(Node):
@@ -223,7 +224,7 @@ class TopNode(Node):
     tprop = "tprop"
 
 
-class uTreeComposite(pylid.TestCase):
+class uTreeComposite(libpry.AutoTree):
     def setUp(self):
         self.lst = [
                 TopNode("top"),
@@ -242,79 +243,63 @@ class uTreeComposite(pylid.TestCase):
 
     def test_siblings(self):
         sibs = list(self.tt["a"].siblings())
-        self.failUnlessEqual(sibs, ["a", "b", "c", "d"])
+        assert sibs == ["a", "b", "c", "d"]
 
     def test_siblings_root(self):
         sibs = list(self.tt.siblings())
-        self.failUnlessEqual(sibs, ["top"])
+        assert sibs == ["top"]
 
     def test_preOrder(self):
-        self.failUnlessEqual(list(self.tt.preOrder()), [
-                                "top",
-                                "a",
-                                "b",
-                                "c",
-                                "ca",
-                                "cb",
-                                "d",
-                                ])
-        self.failUnlessEqual(list(self.tt["a"].preOrder()), ["a"])
+        assert list(self.tt.preOrder()) ==\
+                ["top", "a", "b", "c", "ca", "cb", "d"]
+        assert list(self.tt["a"].preOrder()) == ["a"]
 
     def test_postOrder(self):
-        self.failUnlessEqual(list(self.tt.postOrder()), [
-                                "a",
-                                "b",
-                                "ca",
-                                "cb",
-                                "c",
-                                "d",
-                                "top"
-                                ])
-        self.failUnlessEqual(list(self.tt["a"].postOrder()), ["a"])
+        assert list(self.tt.postOrder()) ==\
+                ["a", "b", "ca", "cb", "c", "d", "top"]
+        assert list(self.tt["a"].postOrder()) == ["a"]
 
     def test_count(self):
-        self.failUnlessEqual(self.tt.count(), 7)
+        assert self.tt.count() == 7
 
     def test_pathToRoot(self):
-        self.failUnlessEqual(list(self.tt["c"]["ca"].pathToRoot()), ["ca", "c", "top"])
-        self.failUnlessEqual(list(self.tt.pathToRoot()), ["top"])
-        self.failUnlessEqual(list(self.tt["a"].pathToRoot()), ["a", "top"])
+        assert list(self.tt["c"]["ca"].pathToRoot()) == ["ca", "c", "top"]
+        assert list(self.tt.pathToRoot()) == ["top"]
+        assert list(self.tt["a"].pathToRoot()) == ["a", "top"]
 
     def test_pathFromRoot(self):
-        self.failUnlessEqual(
-            list(self.tt["c"]["ca"].pathToRoot()),
-            list(reversed(list(self.tt["c"]["ca"].pathFromRoot()))),
-        )
+        assert list(self.tt["c"]["ca"].pathToRoot()) ==\
+                list(reversed(list(self.tt["c"]["ca"].pathFromRoot())))
 
     def test_isDescendantOf(self):
-        self.failUnless(self.tt["a"].isDescendantOf(self.tt))
-        self.failUnless(self.tt["c"]["ca"].isDescendantOf(self.tt["c"]))
-        self.failIf(self.tt["a"].isDescendantOf(self.tt["c"]))
-        self.failIf(self.tt.isDescendantOf(self.tt["c"]))
+        assert self.tt["a"].isDescendantOf(self.tt)
+        assert self.tt["c"]["ca"].isDescendantOf(self.tt["c"])
+        assert not self.tt["a"].isDescendantOf(self.tt["c"])
+        assert not self.tt.isDescendantOf(self.tt["c"])
 
     def test_getTopNode(self):
-        self.failUnlessEqual(self.tt["c"]["ca"].getTopNode(), self.tt)
-        self.failUnlessEqual(self.tt["c"].getTopNode(), self.tt)
-        self.failUnlessEqual(self.tt.getTopNode(), self.tt)
+        assert self.tt["c"]["ca"].getTopNode() == self.tt
+        assert self.tt["c"].getTopNode() == self.tt
+        assert self.tt.getTopNode() == self.tt
 
     def test_findParent(self):
         def search(object):
             return 1
-        self.failUnlessEqual(self.tt["c"]["cb"].findParent(search), self.tt["c"])
+        assert self.tt["c"]["cb"].findParent(search) == self.tt["c"]
         def search(object):
             return (object.name == "top")
-        self.failUnlessEqual(self.tt["c"]["cb"].findParent(search), self.tt)
+        assert self.tt["c"]["cb"].findParent(search) == self.tt
 
     def test_findForwards(self):
         def search(object):
             return 1
-        self.failUnlessEqual(self.tt["c"].findForwards(search), self.tt["c"]["ca"])
-        self.failUnlessEqual(self.tt["d"].findForwards(search), None)
-        self.failUnlessEqual(self.tt["c"]["cb"].findForwards(search), self.tt["d"])
+        assert self.tt["c"].findForwards(search) == self.tt["c"]["ca"]
+        assert self.tt["d"].findForwards(search) == None
+        assert self.tt["c"]["cb"].findForwards(search) == self.tt["d"]
         def search(object):
             return (object.name == "cb")
-        self.failUnlessEqual(self.tt.findForwards(search), self.tt["c"]["cb"])
-        self.failUnlessEqual(self.tt["c"]["cb"].findForwards(search), None)
+        assert self.tt.findForwards(search) == self.tt["c"]["cb"]
+        assert self.tt["c"]["cb"].findForwards(search) == None
 
     def test_findForwardsMultiFunc(self):
         def s1(object):
@@ -349,36 +334,36 @@ class uTreeComposite(pylid.TestCase):
     def test_findBackwards(self):
         def search(object):
             return 1
-        self.failUnlessEqual(self.tt["c"]["ca"].findBackwards(search), self.tt["c"])
-        self.failUnlessEqual(self.tt.findBackwards(search), None)
-        self.failUnlessEqual(self.tt["c"]["cb"].findBackwards(search), self.tt["c"]["ca"])
+        assert self.tt["c"]["ca"].findBackwards(search) == self.tt["c"]
+        assert self.tt.findBackwards(search) == None
+        assert self.tt["c"]["cb"].findBackwards(search) == self.tt["c"]["ca"]
         def search(object):
             return (object.name == "cb")
-        self.failUnlessEqual(self.tt["d"].findBackwards(search), self.tt["c"]["cb"])
-        self.failUnlessEqual(self.tt["c"]["cb"].findBackwards(search), None)
+        assert self.tt["d"].findBackwards(search) == self.tt["c"]["cb"]
+        assert self.tt["c"]["cb"].findBackwards(search) == None
 
     def test_getPrevious(self):
-        self.failUnlessEqual(self.tt["a"].getPrevious(), self.tt)
-        self.failUnlessEqual(self.tt["c"].getPrevious(), self.tt["b"])
-        self.failUnlessEqual(self.tt["c"]["ca"].getPrevious(), self.tt["c"])
-        self.failUnlessEqual(self.tt.getPrevious(), None)
+        assert self.tt["a"].getPrevious() == self.tt
+        assert self.tt["c"].getPrevious() == self.tt["b"]
+        assert self.tt["c"]["ca"].getPrevious() == self.tt["c"]
+        assert self.tt.getPrevious() == None
 
     def test_getNext(self):
-        self.failUnlessEqual(self.tt["c"].getNext(), self.tt["c"]["ca"])
-        self.failUnlessEqual(self.tt["a"].getNext(), self.tt["b"])
-        self.failUnlessEqual(self.tt["c"]["cb"].getNext(), self.tt["d"])
-        self.failUnlessEqual(self.tt["d"].getNext(), None)
+        assert self.tt["c"].getNext() == self.tt["c"]["ca"]
+        assert self.tt["a"].getNext() == self.tt["b"]
+        assert self.tt["c"]["cb"].getNext() == self.tt["d"]
+        assert self.tt["d"].getNext() == None
 
     def test_getDepth(self):
-        self.failUnlessEqual(self.tt.getDepth(), 1)
-        self.failUnlessEqual(self.tt["c"].getDepth(), 2)
-        self.failUnlessEqual(self.tt["c"]["cb"].getDepth(), 3)
+        assert self.tt.getDepth() == 1
+        assert self.tt["c"].getDepth() == 2
+        assert self.tt["c"]["cb"].getDepth() == 3
 
     def test_findAttr(self):
-        self.failUnlessEqual(self.tt["c"]["cb"].findAttr("foo"), "bar")
-        self.failUnlessEqual(self.tt.findAttr("foo"), "bar")
-        self.failUnlessEqual(self.tt.findAttr("wibble", "bar"), "bar")
-        self.failIf(self.tt["c"]["cb"].findAttr("nonexistent"))
+        assert self.tt["c"]["cb"].findAttr("foo") == "bar"
+        assert self.tt.findAttr("foo") == "bar"
+        assert self.tt.findAttr("wibble", "bar") == "bar"
+        assert not self.tt["c"]["cb"].findAttr("nonexistent")
 
     def test_attrsFromRoot(self):
         x = list(self.tt["c"].attrsToRoot("nonexistent"))
@@ -395,7 +380,7 @@ class uTreeComposite(pylid.TestCase):
         assert self.tt["c"]["cb"].tprop == "cprop"
 
     def test_treeProp_notdefined(self):
-        self.failWith(
+        libpry.raises(
             "errprop not defined",
             getattr, self.tt["c"]["cb"],
             "errprop"
@@ -412,3 +397,12 @@ class uTreeComposite(pylid.TestCase):
     def test_dump(self):
         cs = cStringIO.StringIO()
         self.tt.dump(cs)
+
+
+tests = [
+    u_isStringLike(),
+    u_isSequenceLike(),
+    uTreeSimple(),
+    uconstructFromList(),
+    uTreeComposite()
+]
