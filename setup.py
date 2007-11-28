@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
         name="tinytree",
-        version="0.1-alpha",
+        version="0.2",
         description="A simple ordered tree implementation",
         author="Nullcube Pty Ltd",
         author_email="aldo@nullcube.com",
