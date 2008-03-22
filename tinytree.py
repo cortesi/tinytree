@@ -78,8 +78,8 @@ class Tree(object):
         if not isinstance(node, Tree):
             s = "Invalid tree specification: %s is not a Tree object."%repr(node)
             raise ValueError(s)
-        node.register(self)
         self.children.append(node)
+        node.register(self)
 
     def register(self, parent):
         """
