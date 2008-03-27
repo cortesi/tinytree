@@ -3,6 +3,7 @@
 MANIFEST
 /build
 /dist
+/doc
 tinytree_test.py
 # Vim swap files
 *.swp
