@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
+
 import sys, itertools, copy
 
 def _isStringLike(anobj):
@@ -44,11 +45,11 @@ def _isSequenceLike(anobj):
 
 class Tree(object):
     """
-        A simple implementation of an ordered tree. 
+        A simple implementation of an ordered tree 
     """
     def __init__(self, children = None):
         """
-            Argument is a nested list specifying a tree of children.
+            :children A nested list specifying a tree of children
         """
         self.children = []
         if children:
@@ -56,6 +57,11 @@ class Tree(object):
         self.parent = None
             
     def addChildrenFromList(self, children):
+        """
+            Add children to this node.
+
+            :children A nested list specifying a tree of children
+        """
         skip = True
         v = zip(
             itertools.chain([None], children),
@@ -72,8 +78,9 @@ class Tree(object):
 
     def addChild(self, node):
         """
-            Add a child to this node. The node object MUST obey the Pytree
-            interface.
+            Add a child to this node.
+
+            :child A Tree object
         """
         if not isinstance(node, Tree):
             s = "Invalid tree specification: %s is not a Tree object."%repr(node)
@@ -83,8 +90,9 @@ class Tree(object):
 
     def register(self, parent):
         """
-            Register this node with a parent after it has been added to the
-            parent's child list.
+            Called after a node has been added to a parent.
+
+            :child A Tree object
         """
         self.parent = parent
 
@@ -123,6 +131,8 @@ class Tree(object):
             Replace this node with a sequence of other nodes. This is
             equivalent to deleting this node from the child list, and then
             inserting the specified sequence in its place.
+
+            :nodes A sequence of Tree objects
         """
         parent = self.parent
         idx = self.remove()
@@ -134,22 +144,26 @@ class Tree(object):
         """
             Inserts a node between the current node and its parent. Returns the
             specified parent node.
+
+            :node A Tree object
         """
         self.replace(node)
         node.addChild(self)
         return node
 
-    def isDescendantOf(self, obj):
+    def isDescendantOf(self, node):
         """
-            Returns true if object lies somewhere on the path to the root. 
+            Returns true if the specified node lies on the path to the root
+            from this node. 
+
+            :node A Tree object
         """
-        return (obj in self.pathToRoot())
+        return (node in self.pathToRoot())
 
     def siblings(self):
         """
-            Generator yielding all siblings of this object, including this
-            object itself.
-
+            Generator yielding all siblings of this node, including this
+            node itself.
         """
         if not self.parent:
             yield self
@@ -159,8 +173,8 @@ class Tree(object):
 
     def pathToRoot(self):
         """
-            Generator yielding all objects on the path from this element to the
-            root of the tree, including ourselves.
+            Generator yielding all objects on the path from this node to the
+            root of the tree, including this node itself.
         """
         itm = self
         while 1:
@@ -172,25 +186,24 @@ class Tree(object):
 
     def pathFromRoot(self):
         """
-            Generator yielding all objects on the path to this element from the
-            root of the tree, including ourselves.
+            Generator yielding all nodes on the path to this node from the
+            root of the tree, including this node itself.
         """
         l = list(self.pathToRoot())
         for i in reversed(l):
             yield i
 
-    def getTopNode(self):
+    def getRoot(self):
         """
             Return the topmost node in the tree.
         """
-        # FIXME: Rename this to getRoot
         for i in self.pathToRoot():
             pass
         return i
 
     def preOrder(self):
         """
-            Return a list of the elements of the tree in PreOrder.
+            Return a list of subnodes in PreOrder.
         """
         yield self
         # Take copy to make this robust under modification
@@ -200,7 +213,7 @@ class Tree(object):
 
     def postOrder(self):
         """
-            Return a list of the elements of the tree in PreOrder.
+            Return a list of the subnodes in PostOrder.
         """
         # Take copy to make this robust under modification
         for i in self.children[:]:
@@ -229,15 +242,30 @@ class Tree(object):
 
     def findChild(self, *func, **kwargs):
         """
-            Find the first child matching func in a pre-order traversal of this
-            node's children.
+            Find the first child matching all specified selectors in a
+            pre-order traversal of this node's subnodes. Return None if no
+            matching object is found.
+
+            :func A list of selector functions, that accept a node, and return
+            a boolean.
+
+            :kwargs A dictionary of attribute selectors. Checks that matching
+            attributes exist, and that their values are equal to the specified
+            values.
         """
         return self._find(self.preOrder(), *func, **kwargs)
 
     def findParent(self, *func, **kwargs):
         """
             Find the first node matching func in a traversal to the root of the
-            tree.
+            tree. Return None if no matching object is found.
+
+            :func A list of selector functions, that accept a node, and return
+            a boolean.
+
+            :kwargs A dictionary of attribute selectors. Checks that matching
+            attributes exist, and that their values are equal to the specified
+            values.
         """
         return self._find(
             itertools.islice(self.pathToRoot(), 1, None),
@@ -247,11 +275,17 @@ class Tree(object):
 
     def findForwards(self, *func, **kwargs):
         """
-            Search the preOrder tree forwards, passing each element to func,
-            until func returns true, then return the matched object. Return
-            None if object not found.
+            Search forwards in a preOrder traversal of the whole tree (not this
+            node's subnodes). Return None if object not found.
+
+            :func A list of selector functions, that accept a node, and return
+            a boolean.
+
+            :kwargs A dictionary of attribute selectors. Checks that matching
+            attributes exist, and that their values are equal to the specified
+            values.
         """
-        itr = self.getTopNode().preOrder()
+        itr = self.getRoot().preOrder()
         for i in itr:
             if i is self:
                 break
@@ -259,38 +293,48 @@ class Tree(object):
 
     def findBackwards(self, *func, **kwargs):
         """
-            Search the preOrder tree backwards, passing each element to func,
-            until func returns true, then return the matched object. Return
-            None if object not found.
+            Search backwards in a preOrder traversal of the whole tree (not
+            this node's subnodes). Return None if object not found.
+
+            :func A list of selector functions, that accept a node, and return
+            a boolean.
+
+            :kwargs A dictionary of attribute selectors. Checks that matching
+            attributes exist, and that their values are equal to the specified
+            values.
         """
         # FIXME: Dreadfully inefficient...
-        lst = list(self.getTopNode().preOrder())
+        lst = list(self.getRoot().preOrder())
         lst.reverse()
         myIndex = lst.index(self)
         return self._find(lst[(myIndex+1):], *func, **kwargs)
 
     def getPrevious(self):
         """
-            Find the previous node in the preOrder listing of the tree. 
+            Find the previous node in the preOrder traversal of the tree. 
         """
         return self.findBackwards(lambda x: 1)
 
     def getNext(self):
         """
-            Find the next node in the preOrder listing of the tree. 
+            Find the next node in the preOrder traversal of the tree. 
         """
         return self.findForwards(lambda x: 1)
 
     def getDepth(self):
         """
-            Return the depth of this node.
+            Return the depth of this node, i.e. the number of nodes on the path
+            to the root.
         """
         return len(list(self.pathToRoot()))
 
     def findAttr(self, attr, default=None):
         """
             Traverses the path to the root of the tree, looking for the
-            specified attribute. If it is found, return it, else return None.
+            specified attribute. If it is found, return it, else return default.
+
+            :attr A string attribute name
+            :default Arbitrary default return value
         """
         for i in self.pathToRoot():
             if hasattr(i, attr):
@@ -302,6 +346,8 @@ class Tree(object):
             Traverses the path from this node to the root of the tree, and
             yields a value for each attribute. Nodes that do not have the
             attribute and attribute values that test false are ignored.
+
+            :attr A string attribute name
         """
         lst = []
         for i in self.pathToRoot():
@@ -309,19 +355,15 @@ class Tree(object):
             if v:
                 yield v
 
-    def getNamespaceKey(self, attr, key):
-        """
-            A namespace is a dictionary-like attribute on a node. This
-            generator yield the key "key" from all attributes named "attr"
-            between this node and the root.
-        """
-        for i in self.attrsToRoot(attr):
-            n = i.get(key, None)
-            if n:
-                yield n
-
     @staticmethod
     def treeProp(name):
+        """
+            Define a property whose value should be looked up on nodes between
+            this node and the root, inclusive. Returns the first matching
+            attribute. Raises ValueError if no matching attribute is found.
+
+            :name Property name
+        """
         def fget(self):
             if self.__dict__.has_key(name):
                 return self.__dict__[name]
@@ -334,6 +376,12 @@ class Tree(object):
         return property(fget, fset)
 
     def dump(self, outf=sys.stdout):
+        """
+            Dump a formatted representation of this tree to the specified file
+            descriptor.
+
+            :outf Output file descriptor.
+        """
         for i in self.preOrder():
             print >> outf, "\t"*(i.getDepth()-1), repr(i)
     
@@ -346,12 +394,11 @@ class Tree(object):
 
 def constructFromList(lst):
     """
-        Takes a nested list of Tree objects, and creates the link structure to
-        turn it into a forest of trees.
-
-        Returns a list consisting of the nodes at the base of each tree.
-        Lists are constructed "bottom-up", so all parent nodes for a
-        particular node are guaranteed to exist when "addChild" is run.
+        :lst a nested list of Tree objects
+        
+        Returns a list consisting of the nodes at the base of each tree.  Trees
+        are constructed "bottom-up", so all parent nodes for a particular node
+        are guaranteed to exist when "addChild" is run.
     """
     heads = []
     for i, val in enumerate(lst):

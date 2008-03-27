@@ -277,10 +277,10 @@ class uTreeComposite(libpry.AutoTree):
         assert not self.tt["a"].isDescendantOf(self.tt["c"])
         assert not self.tt.isDescendantOf(self.tt["c"])
 
-    def test_getTopNode(self):
-        assert self.tt["c"]["ca"].getTopNode() == self.tt
-        assert self.tt["c"].getTopNode() == self.tt
-        assert self.tt.getTopNode() == self.tt
+    def test_getRoot(self):
+        assert self.tt["c"]["ca"].getRoot() == self.tt
+        assert self.tt["c"].getRoot() == self.tt
+        assert self.tt.getRoot() == self.tt
 
     def test_findParent(self):
         def search(object):
@@ -385,14 +385,6 @@ class uTreeComposite(libpry.AutoTree):
             getattr, self.tt["c"]["cb"],
             "errprop"
         )
-
-    def test_getNamespaceKey(self):
-        self.tt.ns = dict(a=1)
-        n = self.tt["c"]["cb"]
-        assert list(n.getNamespaceKey("ns", "a")) == [1]
-        assert list(n.getNamespaceKey("ns", "b")) == []
-        self.tt["c"].ns = dict(a=2)
-        assert list(n.getNamespaceKey("ns", "a")) == [2, 1]
 
     def test_dump(self):
         cs = cStringIO.StringIO()

@@ -1,0 +1,3 @@
+recursive-include test *
+recursive-include doc *.html *.js *.css *.png
+recursive-exclude test *.swo *.swp *.pyc
