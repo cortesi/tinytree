@@ -17,6 +17,7 @@ setup(
         name="tinytree",
         version="0.2",
         description="A simple ordered tree implementation",
+        long_description=long_description,
         author="Nullcube Pty Ltd",
         author_email="aldo@nullcube.com",
         license="MIT",

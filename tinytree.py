@@ -140,6 +140,20 @@ class Tree(object):
         for i in nodes:
             i.register(parent)
 
+    def inject(self, node):
+        """
+            Inserts a node between the current node and its children. Returns the
+            specified parent node.
+
+            :node A Tree object
+        """
+        for i in self.children[:]:
+            i.remove()
+            node.addChild(i)
+        self.clear()
+        self.addChild(node)
+        return node
+
     def reparent(self, node):
         """
             Inserts a node between the current node and its parent. Returns the

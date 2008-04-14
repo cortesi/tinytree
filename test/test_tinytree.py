@@ -241,6 +241,12 @@ class uTreeComposite(libpry.AutoTree):
             ]
         self.tt = tinytree.constructFromList(self.lst)[0]
 
+    def test_inject(self):
+        n = Node("test")
+        self.tt.inject(n)
+        assert len(self.tt.children) == 1
+        assert len(self.tt["test"].children) == 4
+
     def test_siblings(self):
         sibs = list(self.tt["a"].siblings())
         assert sibs == ["a", "b", "c", "d"]
