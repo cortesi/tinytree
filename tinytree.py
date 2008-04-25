@@ -167,12 +167,20 @@ class Tree(object):
 
     def isDescendantOf(self, node):
         """
-            Returns true if the specified node lies on the path to the root
-            from this node. 
+            Returns true if this node lies on the path to the root from the
+            specified node. 
 
             :node A Tree object
         """
-        return (node in self.pathToRoot())
+        return (self in node.pathToRoot())
+
+    def isSiblingOf(self, node):
+        """
+            Returns true if this node is a sibling of the specified node. 
+
+            :node A Tree object
+        """
+        return (self in node.siblings())
 
     def siblings(self):
         """

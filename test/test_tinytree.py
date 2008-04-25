@@ -278,10 +278,15 @@ class uTreeComposite(libpry.AutoTree):
                 list(reversed(list(self.tt["c"]["ca"].pathFromRoot())))
 
     def test_isDescendantOf(self):
-        assert self.tt["a"].isDescendantOf(self.tt)
-        assert self.tt["c"]["ca"].isDescendantOf(self.tt["c"])
-        assert not self.tt["a"].isDescendantOf(self.tt["c"])
-        assert not self.tt.isDescendantOf(self.tt["c"])
+        assert self.tt.isDescendantOf(self.tt["a"])
+        assert self.tt["c"].isDescendantOf(self.tt["c"]["ca"])
+        assert not self.tt["c"].isDescendantOf(self.tt["a"])
+        assert not self.tt["c"].isDescendantOf(self.tt)
+
+    def test_isSiblingOf(self):
+        assert not self.tt.isSiblingOf(self.tt["a"])
+        assert self.tt["a"].isSiblingOf(self.tt["b"])
+        assert not self.tt["a"].isSiblingOf(self.tt["c"]["ca"])
 
     def test_getRoot(self):
         assert self.tt["c"]["ca"].getRoot() == self.tt
