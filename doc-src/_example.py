@@ -14,6 +14,6 @@ n = T(
         [T("one"), T("two"), [ T("three") ], T("four") ]
     )
 n.dump()
-print list(n.preOrder())
-print list(n.postOrder())
-print n.findForwards(name="three")
+print(list(n.preOrder()))
+print(list(n.postOrder()))
+print(n.findForwards(name="three"))

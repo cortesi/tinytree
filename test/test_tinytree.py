@@ -1,4 +1,4 @@
-import os, os.path, cStringIO
+import os, os.path, io
 import libpry
 import tinytree
 
@@ -398,7 +398,7 @@ class uTreeComposite(libpry.AutoTree):
         )
 
     def test_dump(self):
-        cs = cStringIO.StringIO()
+        cs = io.StringIO()
         self.tt.dump(cs)
 
 
