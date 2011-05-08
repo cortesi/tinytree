@@ -20,7 +20,7 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-import sys, itertools, copy
+import sys, itertools, copy, unicodedata
 
 def _isStringLike(anobj):
     try:
@@ -405,8 +405,9 @@ class Tree(object):
             :outf Output file descriptor.
         """
         for i in self.preOrder():
-            print >> outf, "\t"*(i.getDepth()-1), repr(i)
-    
+            print >> outf, "\t"*(i.getDepth()-1), unicodedata.normalize('NFKD', unicode(i)).encode('ascii','ignore')
+
+
     def count(self):
         """
             Number of nodes in this tree, including the root.
