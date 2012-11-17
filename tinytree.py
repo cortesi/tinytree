@@ -63,10 +63,10 @@ class Tree(object):
             :children A nested list specifying a tree of children
         """
         skip = True
-        v = zip(
+        v = list(zip(
             itertools.chain([None], children),
             itertools.chain(children, [None])
-        )
+        ))
         for i in v:
             if skip:
                 skip = False
@@ -247,7 +247,7 @@ class Tree(object):
         for i in itr:
             if kwargs:
                 kwpass = False
-                for k, v in kwargs.items():
+                for k, v in list(kwargs.items()):
                     if hasattr(i, k):
                         if not getattr(i, k) == v:
                             break
@@ -258,7 +258,7 @@ class Tree(object):
             else:
                 kwpass = True
             if kwpass:
-                if all(map(lambda x: x(i), func)):
+                if all([x(i) for x in func]):
                     return i
         return None
 
@@ -387,11 +387,11 @@ class Tree(object):
             :name Property name
         """
         def fget(self):
-            if self.__dict__.has_key(name):
+            if name in self.__dict__:
                 return self.__dict__[name]
             else:
                 if not self.parent:
-                    raise ValueError, "Property %s not defined."%name
+                    raise ValueError("Property %s not defined."%name)
                 return getattr(self.parent, name)
         def fset(self, value):
             self.__dict__[name] = value
@@ -405,7 +405,7 @@ class Tree(object):
             :outf Output file descriptor.
         """
         for i in self.preOrder():
-            print >> outf, "\t"*(i.getDepth()-1), unicodedata.normalize('NFKD', unicode(i)).encode('ascii','ignore')
+            print("\t"*(i.getDepth()-1), unicodedata.normalize('NFKD', str(i)).encode('ascii','ignore'), file=outf)
 
 
     def count(self):
@@ -427,7 +427,7 @@ def constructFromList(lst):
     for i, val in enumerate(lst):
         if _isSequenceLike(val):
             if i == 0 or _isSequenceLike(lst[i-1]):
-                raise ValueError, "constructFromList: Invalid list."
+                raise ValueError("constructFromList: Invalid list.")
             lst[i-1].addChildrenFromList(val)
         else:
             heads.append(val)
