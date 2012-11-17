@@ -1,17 +1,17 @@
 # The MIT License
-# 
+#
 # Copyright (c) 2007 Aldo Cortesi
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
 # deal in the Software without restriction, including without limitation the
 # rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 # sell copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -45,7 +45,7 @@ def _isSequenceLike(anobj):
 
 class Tree(object):
     """
-        A simple implementation of an ordered tree 
+        A simple implementation of an ordered tree
     """
     def __init__(self, children = None):
         """
@@ -55,7 +55,7 @@ class Tree(object):
         if children:
             self.addChildrenFromList(children)
         self.parent = None
-            
+
     def addChildrenFromList(self, children):
         """
             Add children to this node.
@@ -168,7 +168,7 @@ class Tree(object):
     def isDescendantOf(self, node):
         """
             Returns true if this node lies on the path to the root from the
-            specified node. 
+            specified node.
 
             :node A Tree object
         """
@@ -176,7 +176,7 @@ class Tree(object):
 
     def isSiblingOf(self, node):
         """
-            Returns true if this node is a sibling of the specified node. 
+            Returns true if this node is a sibling of the specified node.
 
             :node A Tree object
         """
@@ -333,13 +333,13 @@ class Tree(object):
 
     def getPrevious(self):
         """
-            Find the previous node in the preOrder traversal of the tree. 
+            Find the previous node in the preOrder traversal of the tree.
         """
         return self.findBackwards(lambda x: 1)
 
     def getNext(self):
         """
-            Find the next node in the preOrder traversal of the tree. 
+            Find the next node in the preOrder traversal of the tree.
         """
         return self.findForwards(lambda x: 1)
 
@@ -405,8 +405,10 @@ class Tree(object):
             :outf Output file descriptor.
         """
         for i in self.preOrder():
-            print("\t"*(i.getDepth()-1), unicodedata.normalize('NFKD', str(i)).encode('ascii','ignore'), file=outf)
-
+            s = "\t"*(i.getDepth()-1)
+            s += unicodedata.normalize('NFKD', unicode(i)).encode('ascii','ignore')
+            outf.write(s)
+            outf.write("\n")
 
     def count(self):
         """
@@ -418,7 +420,7 @@ class Tree(object):
 def constructFromList(lst):
     """
         :lst a nested list of Tree objects
-        
+
         Returns a list consisting of the nodes at the base of each tree.  Trees
         are constructed "bottom-up", so all parent nodes for a particular node
         are guaranteed to exist when "addChild" is run.
