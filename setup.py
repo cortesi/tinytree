@@ -15,14 +15,13 @@ TinyTree requires Python 2.5 or newer.
 
 setup(
         name="tinytree",
-        version="0.2",
+        version="0.2.1",
         description="A simple ordered tree implementation",
         long_description=long_description,
-        author="Nullcube Pty Ltd",
-        author_email="aldo@nullcube.com",
+        author="Aldo Cortesi",
+        author_email="aldo@corte.si",
         license="MIT",
-        url="http://www.nullcube.com",
-        download_url="http://dev.nullcube.com/download/tinytree-0.2.tar.gz",
+        url="https://github.com/cortesi/tinytree",
         py_modules = ["tinytree"],
         classifiers = [
             "Intended Audience :: Developers",
